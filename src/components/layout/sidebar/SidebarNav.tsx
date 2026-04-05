@@ -1,11 +1,9 @@
 import { BellIcon, LogOutIcon, MenuIcon } from "lucide-react";
 import BrandLogoImg from "@/assets/pitambariLogo.jpg"
-import { BrandLogo } from "@/icons copy/BrandLogo";
+// import { BrandLogo } from "@/icons copy/BrandLogo";
 import {
   iconBtnClass,
   navBranch,
-  navOrganization,
-  navSuperAdmin,
 } from "./navConfig";
 import {
   Tooltip,
@@ -14,7 +12,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useAuthStore } from "@/store/auth-store";
-import { domainConfig } from "@/config/domain";
 import { DeleteOrganizationModal } from "@/components/globalModels/deleteModel";
 import { CollapsibleNavItem } from "./CollapsibleNavItem";
 
@@ -25,7 +22,7 @@ type Props = {
 };
 
 export function SidebarNav({ collapsed, onToggle, onNavClick }: Props) {
-  const { logout, user } = useAuthStore();
+  const { logout } = useAuthStore();
   const nav = navBranch
 
   return (

@@ -5,7 +5,6 @@ import { authInstance } from "@/config/axios-interceptor";
 import { branchEndpoints } from "@/config/endpoints";
 import { staffKeys } from "@/config/querykeys/(branchKeys)/managementKeys";
 import { useSearchParamsManager } from "@/hooks/useSearchParamsManager";
-import type { Staff } from "@/types/(branch)/management/staff";
 import { useQuery } from "@tanstack/react-query";
 import { productionColumns } from "./components/ProductionColumn";
 import StaffPageTop from "./components/ProductionPageTop";
@@ -20,7 +19,7 @@ const deleteDialogText={
 
 function ProductionPage() {
   const { params } = useSearchParamsManager();
-  const { data, isLoading } = useQuery<PaginatedResponse<ProductionOrder>>({
+  const { data, isLoading } = useQuery<PaginatedResponse<ProductionOrder & {id: number}>>({
     queryKey: [staffKeys.ALL_STAFF, params],
     queryFn: async () => {
       return await authInstance.get(branchEndpoints.STAFF, {
@@ -49,7 +48,7 @@ function ProductionPage() {
         />
       </Page.Content>
 
-      <SelectionActionBar<Staff>
+      <SelectionActionBar<ProductionOrder & {id: number}>
         deleteCallBack={(data) => {
           return authInstance.post(`${branchEndpoints.BULKDELETE}`, {
             object_ids: data.map((item) => item.id),

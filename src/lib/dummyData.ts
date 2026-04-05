@@ -1,4 +1,3 @@
-import type { Organization } from "@/types/user";
 
 export const dummyOrganizations: any[] = [
   {

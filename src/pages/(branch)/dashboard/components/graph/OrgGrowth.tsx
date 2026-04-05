@@ -97,7 +97,7 @@ export default function OrganizationGrowthChart(): React.ReactElement {
 
     // Find max value across all series
     const maxValue = Math.max(
-      ...chartData.flatMap((d) => [d.total || 0, d.active || 0, d.trial || 0]),
+      ...chartData.flatMap((d:any) => [d.total || 0, d.active || 0, d.trial || 0]),
     );
 
     // Round up to nearest 20 for cleaner display

@@ -3,7 +3,7 @@ import { Outlet } from "react-router";
 import { SidebarNav } from "./SidebarNav";
 import SidebarMobile from "./SidebarMobile";
 import BrandLogoImg from "@/assets/pitambariLogo.jpg"
-import { BrandLogo } from "@/icons copy/BrandLogo";
+// import { BrandLogo } from "@/icons copy/BrandLogo";
 import { useAuthStore } from "@/store/auth-store";
 
 export default function SideBar() {

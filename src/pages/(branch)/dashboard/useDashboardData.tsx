@@ -1,6 +1,6 @@
-import { authInstance } from "@/config/axios-interceptor";
+// import { authInstance } from "@/config/axios-interceptor";
 // import { endpoints } from "@/config/endpoints";
-import type { DashboardData } from "@/types/dashboard";
+// import type { DashboardData } from "@/types/dashboard";
 import { useQuery } from "@tanstack/react-query";
 
 export const useDashboardData = () => {

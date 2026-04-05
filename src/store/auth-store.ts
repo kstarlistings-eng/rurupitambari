@@ -12,15 +12,20 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
       error: null,
       refreshTokenPromise: null,
+      accessToken: null,
+      refreshToken: null,
 
       getMe: async () => {
         // Simulated API call to get user data
         return new Promise((resolve) => {
           setTimeout(() => {
             const user = {
-              id: 1,
-              name: "John Doe",
+              id: "1",
+              first_name: "John",
+              last_name: "Doe",
+              username: "johndoe",
               email: "john.doe@example.com",
+              phone: "1234567890",
             };
             resolve(user);
           }, 1000);
@@ -53,6 +58,8 @@ export const useAuthStore = create<AuthState>()(
           error: null,
           isLoading: false,
           refreshTokenPromise: null,
+          accessToken: null,
+          refreshToken: null,
         });
       },
       getUser: async (isLoading = true) => {
@@ -78,6 +85,22 @@ export const useAuthStore = create<AuthState>()(
       },
 
       clearError: () => set({ error: null }),
+
+      clear: () => set({
+        user: null,
+        isAuthenticated: false,
+        error: null,
+        isLoading: false,
+        refreshTokenPromise: null,
+        accessToken: null,
+        refreshToken: null,
+      }),
+
+      refreshTokenFn: async () => {
+        // Implement token refresh logic here
+        // For now, this is a stub
+        return null;
+      },
 
       checkAuth: () => {
         const { user, isAuthenticated } = get();

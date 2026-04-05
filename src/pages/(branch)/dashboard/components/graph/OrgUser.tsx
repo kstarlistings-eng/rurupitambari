@@ -99,7 +99,7 @@ export default function MonthlyGrowthChart(): React.ReactElement {
 
     // Find max value across both series
     const maxValue = Math.max(
-      ...chartData.flatMap((d) => [d.organizations || 0, d.users || 0]),
+      ...chartData.flatMap((d: any) => [d.organizations || 0, d.users || 0]),
     );
 
     // Round up to nearest 20 for cleaner display

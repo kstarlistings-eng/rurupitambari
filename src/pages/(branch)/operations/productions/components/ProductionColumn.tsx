@@ -1,113 +1,114 @@
 import {
   DeleteOrganizationModal,
-  type deleteModalText,
+  // type deleteModalText,
 } from "@/components/globalModels/deleteModel";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuGroup,
+//   DropdownMenuItem,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
+// import { cn } from "@/lib/utils";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ChevronDown, Edit, Loader } from "lucide-react";
+// import { ChevronDown, Edit, Loader } from "lucide-react";
+import { Edit } from "lucide-react";
 import { Link } from "react-router";
 
-import { notify } from "@/components/toast/NotifyToast";
+// import { notify } from "@/components/toast/NotifyToast";
 import { authInstance } from "@/config/axios-interceptor";
-import { branchEndpoints } from "@/config/endpoints";
-import { staffKeys } from "@/config/querykeys/(branchKeys)/managementKeys";
+// import { branchEndpoints } from "@/config/endpoints";
+// import { staffKeys } from "@/config/querykeys/(branchKeys)/managementKeys";
 import { format } from "date-fns"; 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+// import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { ProductionOrder } from "@/schema/(branchSchema)/operations/production";
 
-const statusStyles: Record<string, string> = {
-  active: "bg-green-50 text-green-600 border-green-200",
-  inactive: "bg-destructive-50 text-destructive-600 border-destructive-200",
-};
+// const statusStyles: Record<string, string> = {
+//   active: "bg-green-50 text-green-600 border-green-200",
+//   inactive: "bg-destructive-50 text-destructive-600 border-destructive-200",
+// };
 
-function StatusDropdown({
-  status,
-  onStatusChange,
-  isUpdating,
-}: {
-  status: string;
-  onStatusChange?: (val: string) => void;
-  isUpdating?: boolean;
-}) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className={cn(
-            "capitalize gap-1 px-3 py-1 h-8 text-sm font-medium rounded-full",
-            statusStyles[status],
-          )}
-          disabled={isUpdating}
-        >
-          {status}
-          {isUpdating ? (
-            <Loader className="animate-spin h-3.5 w-3.5" />
-          ) : (
-            <ChevronDown className="h-3.5 w-3.5" />
-          )}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuGroup>
-          {["active", "inactive"].map((opt) => (
-            <DropdownMenuItem
-              key={opt}
-              onSelect={() => onStatusChange?.(opt)}
-              className="capitalize"
-            >
-              {opt}
-              {opt === status && (
-                <span className="ms-auto text-green-500">✓</span>
-              )}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
+// function StatusDropdown({
+//   status,
+//   onStatusChange,
+//   isUpdating,
+// }: {
+//   status: string;
+//   onStatusChange?: (val: string) => void;
+//   isUpdating?: boolean;
+// }) {
+//   return (
+//     <DropdownMenu>
+//       <DropdownMenuTrigger asChild>
+//         <Button
+//           variant="outline"
+//           className={cn(
+//             "capitalize gap-1 px-3 py-1 h-8 text-sm font-medium rounded-full",
+//             statusStyles[status],
+//           )}
+//           disabled={isUpdating}
+//         >
+//           {status}
+//           {isUpdating ? (
+//             <Loader className="animate-spin h-3.5 w-3.5" />
+//           ) : (
+//             <ChevronDown className="h-3.5 w-3.5" />
+//           )}
+//         </Button>
+//       </DropdownMenuTrigger>
+//       <DropdownMenuContent>
+//         <DropdownMenuGroup>
+//           {["active", "inactive"].map((opt) => (
+//             <DropdownMenuItem
+//               key={opt}
+//               onSelect={() => onStatusChange?.(opt)}
+//               className="capitalize"
+//             >
+//               {opt}
+//               {opt === status && (
+//                 <span className="ms-auto text-green-500">✓</span>
+//               )}
+//             </DropdownMenuItem>
+//           ))}
+//         </DropdownMenuGroup>
+//       </DropdownMenuContent>
+//     </DropdownMenu>
+//   );
+// }
 
-function ActiveInactive({ status, id }: { status: string; id: number }) {
-  const queryClient = useQueryClient();
-  const statusChangeMutation = useMutation({
-    mutationFn: async (newStatus: string) => {
-      await authInstance.patch(`${branchEndpoints.STAFF}${id}/`, {
-        is_active: newStatus === "active",
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [staffKeys.ALL_STAFF] });
-    },
-    onError: (error) => {
-      notify({
-        title: "Error",
-        message: error?.message || "Failed to update status. Please try again.",
-        variant: "error",
-      });
-    },
-  });
-  return (
-    <StatusDropdown
-      isUpdating={statusChangeMutation.isPending}
-      status={status}
-      onStatusChange={(newStatus) => {
-        if (newStatus !== status) {
-          statusChangeMutation.mutate(newStatus);
-        }
-      }}
-    />
-  );
-}
+// function ActiveInactive({ status, id }: { status: string; id: number }) {
+//   const queryClient = useQueryClient();
+//   const statusChangeMutation = useMutation({
+//     mutationFn: async (newStatus: string) => {
+//       await authInstance.patch(`${branchEndpoints.STAFF}${id}/`, {
+//         is_active: newStatus === "active",
+//       });
+//     },
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: [staffKeys.ALL_STAFF] });
+//     },
+//     onError: (error) => {
+//       notify({
+//         title: "Error",
+//         message: error?.message || "Failed to update status. Please try again.",
+//         variant: "error",
+//       });
+//     },
+//   });
+//   return (
+//     <StatusDropdown
+//       isUpdating={statusChangeMutation.isPending}
+//       status={status}
+//       onStatusChange={(newStatus) => {
+//         if (newStatus !== status) {
+//           statusChangeMutation.mutate(newStatus);
+//         }
+//       }}
+//     />
+//   );
+// }
 
 
 

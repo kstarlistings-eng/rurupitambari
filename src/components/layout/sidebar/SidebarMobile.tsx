@@ -1,4 +1,4 @@
-import { BrandLogo } from "@/icons copy/BrandLogo";
+// import { BrandLogo } from "@/icons copy/BrandLogo";
 import { BellIcon, LogOutIcon, MenuIcon } from "lucide-react";
 import BrandLogoImg from "@/assets/pitambariLogo.jpg"
 import {
@@ -8,12 +8,13 @@ import {
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuthStore } from "@/store/auth-store";
-import { domainConfig } from "@/config/domain";
+// import { domainConfig } from "@/config/domain";
 import { DeleteOrganizationModal } from "@/components/globalModels/deleteModel";
 import { CollapsibleNavItem } from "./CollapsibleNavItem";
 
 function SidebarMobile({ onNavClick }: { onNavClick?: (id: string) => void }) {
-  const { logout, user } = useAuthStore();
+  // const { logout, user } = useAuthStore();
+   const { logout } = useAuthStore();
   const [collapsed, setCollapsed] = useState(false);
   const nav = navBranch
 
