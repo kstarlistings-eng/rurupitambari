@@ -18,6 +18,7 @@ import { notify } from "@/components/toast/NotifyToast";
 // import { BrandLogo } from "@/icons copy/BrandLogo";
 import LoginLayout from "@/components/layout/login/LoginLayout";
 import { useAuthStore } from "@/store/auth-store";
+import { getHomePath } from "@/lib/role-utils";
 
 
 const ChairlyoLogin = () => {
@@ -30,13 +31,13 @@ const ChairlyoLogin = () => {
 
   const loginMutation = useMutation({
     mutationFn: login,
-    onSuccess: () => {
+    onSuccess: (data) => {
       notify({
         variant: "success",
         message: "Login successful!",
         title: "Success",
       });
-      navigate("/");
+      navigate(getHomePath(data.role));
     },
     onError: () => {
       notify({

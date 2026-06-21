@@ -8,7 +8,7 @@ const router = Router();
 router.get(
   "/",
   authenticate,
-  requireRole("admin_finance", "production_operator", "store_operator"),
+  requireRole("admin_finance"),
   getDashboardHandler
 );
 

@@ -14,31 +14,31 @@ const router = Router();
 router.get(
   "/",
   authenticate,
-  requireRole("admin_finance"),
+  requireRole("admin_finance", "store_operator"),
   listSellersHandler
 );
 router.get(
   "/:id",
   authenticate,
-  requireRole("admin_finance"),
+  requireRole("admin_finance", "store_operator"),
   getSellerHandler
 );
 router.post(
   "/",
   authenticate,
-  requireRole("admin_finance"),
+  requireRole("admin_finance", "store_operator"),
   createSellerHandler
 );
 router.patch(
   "/:id",
   authenticate,
-  requireRole("admin_finance"),
+  requireRole("admin_finance", "store_operator"),
   updateSellerHandler
 );
 router.delete(
   "/:id",
   authenticate,
-  requireRole("admin_finance"),
+  requireRole("admin_finance", "store_operator"),
   deleteSellerHandler
 );
 

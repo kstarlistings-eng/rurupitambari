@@ -2,7 +2,9 @@ import { createBrowserRouter } from "react-router";
 import AuthRedirectGuard from "@/components/guards/AuthRedirectGuard";
 import AuthRequiredGuard from "@/components/guards/AuthRequiredGuard";
 import LoginGuard from "@/components/guards/LoginGuard";
+import RoleGuard from "@/components/guards/RoleGuard";
 import Sidebar from "@/components/layout/sidebar/SideBar";
+import { getHomePath } from "@/lib/role-utils";
 
 import StaffPage from "@/pages/(branch)/management/staff/StaffPage";
 import StaffAddEditPage from "@/pages/(branch)/management/staff/type/AddEditPage";
@@ -42,7 +44,11 @@ const routerBranch = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <DashBoardPage />,
+        element: (
+          <RoleGuard allowedRoles={["admin_finance"]} getFallbackPath={getHomePath}>
+            <DashBoardPage />
+          </RoleGuard>
+        ),
       },
       {
         path: "raw-material",
@@ -78,19 +84,47 @@ const routerBranch = createBrowserRouter([
       },
       {
         path: "sellers",
-        element: <SellerPage />,
+        element: (
+          <RoleGuard
+            allowedRoles={["admin_finance", "store_operator"]}
+            getFallbackPath={getHomePath}
+          >
+            <SellerPage />
+          </RoleGuard>
+        ),
       },
       {
         path: "sellers/:type",
-        element: <SellerAddEditPage />,
+        element: (
+          <RoleGuard
+            allowedRoles={["admin_finance", "store_operator"]}
+            getFallbackPath={getHomePath}
+          >
+            <SellerAddEditPage />
+          </RoleGuard>
+        ),
       },
       {
         path: "sales-dispatch",
-        element: <SalesDispatchPage />,
+        element: (
+          <RoleGuard
+            allowedRoles={["admin_finance", "store_operator"]}
+            getFallbackPath={getHomePath}
+          >
+            <SalesDispatchPage />
+          </RoleGuard>
+        ),
       },
       {
         path: "sales-dispatch/:type",
-        element: <SalesDispatchAddEditPage />,
+        element: (
+          <RoleGuard
+            allowedRoles={["admin_finance", "store_operator"]}
+            getFallbackPath={getHomePath}
+          >
+            <SalesDispatchAddEditPage />
+          </RoleGuard>
+        ),
       },
       {
         path: "billing/invoices",

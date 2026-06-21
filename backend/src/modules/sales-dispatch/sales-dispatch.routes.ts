@@ -14,31 +14,31 @@ const router = Router();
 router.get(
   "/",
   authenticate,
-  requireRole("admin_finance"),
+  requireRole("admin_finance", "store_operator"),
   listSalesDispatchesHandler
 );
 router.get(
   "/:id",
   authenticate,
-  requireRole("admin_finance"),
+  requireRole("admin_finance", "store_operator"),
   getSalesDispatchHandler
 );
 router.post(
   "/",
   authenticate,
-  requireRole("admin_finance"),
+  requireRole("admin_finance", "store_operator"),
   createSalesDispatchHandler
 );
 router.patch(
   "/:id",
   authenticate,
-  requireRole("admin_finance"),
+  requireRole("admin_finance", "store_operator"),
   updateSalesDispatchHandler
 );
 router.delete(
   "/:id",
   authenticate,
-  requireRole("admin_finance"),
+  requireRole("admin_finance", "store_operator"),
   deleteSalesDispatchHandler
 );
 
