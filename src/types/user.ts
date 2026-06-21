@@ -3,8 +3,8 @@ interface User {
   first_name: string;
   last_name: string;
   email: string;
-  username: string;
-  phone: string | null;
+  role: string;
+  is_active?: boolean;
 }
 
 interface Admin {

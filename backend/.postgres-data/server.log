@@ -1,0 +1,20 @@
+2026-06-21 09:07:16.673 +0545 [9383] LOG:  starting PostgreSQL 18.3 (Ubuntu 18.3-1.pgdg24.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit
+2026-06-21 09:07:16.673 +0545 [9383] LOG:  listening on IPv4 address "127.0.0.1", port 5433
+2026-06-21 09:07:16.675 +0545 [9383] FATAL:  could not create lock file "/var/run/postgresql/.s.PGSQL.5433.lock": Permission denied
+2026-06-21 09:07:16.680 +0545 [9383] LOG:  database system is shut down
+2026-06-21 09:07:25.736 +0545 [9395] LOG:  starting PostgreSQL 18.3 (Ubuntu 18.3-1.pgdg24.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit
+2026-06-21 09:07:25.736 +0545 [9395] LOG:  listening on IPv4 address "127.0.0.1", port 5433
+2026-06-21 09:07:25.737 +0545 [9395] FATAL:  could not create lock file ".postgres-sockets/.s.PGSQL.5433.lock": No such file or directory
+2026-06-21 09:07:25.741 +0545 [9395] LOG:  database system is shut down
+2026-06-21 09:07:34.496 +0545 [9409] LOG:  starting PostgreSQL 18.3 (Ubuntu 18.3-1.pgdg24.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit
+2026-06-21 09:07:34.496 +0545 [9409] LOG:  listening on IPv4 address "127.0.0.1", port 5433
+2026-06-21 09:07:34.497 +0545 [9409] LOG:  listening on Unix socket "/home/bibek/MyWork/ruruPitambari/backend/.postgres-sockets/.s.PGSQL.5433"
+2026-06-21 09:07:34.504 +0545 [9415] LOG:  database system was shut down at 2026-06-21 09:07:11 +0545
+2026-06-21 09:07:34.510 +0545 [9409] LOG:  database system is ready to accept connections
+2026-06-21 09:07:37.572 +0545 [9422] FATAL:  role "bibek" does not exist
+2026-06-21 09:12:34.590 +0545 [9413] LOG:  checkpoint starting: time
+2026-06-21 09:14:18.983 +0545 [9413] LOG:  checkpoint complete: wrote 1042 buffers (6.4%), wrote 3 SLRU buffers; 1 WAL file(s) added, 0 removed, 0 recycled; write=104.342 s, sync=0.034 s, total=104.394 s; sync files=365, longest=0.002 s, average=0.001 s; distance=5089 kB, estimate=5089 kB; lsn=0/1C596E8, redo lsn=0/1C59658
+2026-06-21 09:27:35.206 +0545 [9413] LOG:  checkpoint starting: time
+2026-06-21 09:27:41.336 +0545 [9413] LOG:  checkpoint complete: wrote 61 buffers (0.4%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=6.120 s, sync=0.006 s, total=6.130 s; sync files=38, longest=0.002 s, average=0.001 s; distance=72 kB, estimate=4587 kB; lsn=0/1C6BA18, redo lsn=0/1C6B988
+2026-06-21 09:32:35.436 +0545 [9413] LOG:  checkpoint starting: time
+2026-06-21 09:32:35.744 +0545 [9413] LOG:  checkpoint complete: wrote 3 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.302 s, sync=0.003 s, total=0.308 s; sync files=4, longest=0.002 s, average=0.001 s; distance=1 kB, estimate=4128 kB; lsn=0/1C6BF58, redo lsn=0/1C6BF00

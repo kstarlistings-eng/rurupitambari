@@ -1,6 +1,6 @@
 import { Page } from "@/components/layout/page/PageLayout";
 import AddEditTop from "./components/AddEditTop";
-import StaffForm from "./components/StaffForm";
+import ProductionOrderForm from "./components/StaffForm";
 import useProductionFormActions from "./useProductionFormActions";
 import { Loader } from "lucide-react";
 
@@ -11,8 +11,11 @@ function AddEditPage() {
     onSubmit,
     isEditMode,
     isPending,
+    fields,
+    append,
+    remove,
   } = useProductionFormActions();
-  
+
   if (isLoading) {
     return (
       <div className="h-full flex items-center justify-center">
@@ -32,7 +35,7 @@ function AddEditPage() {
           />
         </Page.Header>
         <Page.Content>
-          <StaffForm form={form}/>
+          <ProductionOrderForm form={form} fields={fields} append={append} remove={remove} />
         </Page.Content>
       </Page.FormContainer>
     </Page>

@@ -18,14 +18,11 @@ import { notify } from "@/components/toast/NotifyToast";
 // import { BrandLogo } from "@/icons copy/BrandLogo";
 import LoginLayout from "@/components/layout/login/LoginLayout";
 import { useAuthStore } from "@/store/auth-store";
-import { parseAsInteger, useQueryState } from "nuqs";
+
 
 const ChairlyoLogin = () => {
   const handleSubmit = (data: LoginInput) => {
-    loginMutation.mutate({
-      ...data,
-      branch_id: branchId ? Number(branchId) : undefined,
-    });
+    loginMutation.mutate(data);
   };
   const { login } = useAuthStore();
 
@@ -54,11 +51,6 @@ const ChairlyoLogin = () => {
     resolver: zodResolver(loginSchema),
     defaultValues: LoginInputDefaultValues,
   });
-
-  const [branchId] = useQueryState(
-    "branch_id",
-    parseAsInteger.withDefault(NaN),
-  );
 
   return (
     <LoginLayout>

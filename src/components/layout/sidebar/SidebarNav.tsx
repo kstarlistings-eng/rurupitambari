@@ -4,6 +4,7 @@ import BrandLogoImg from "@/assets/pitambariLogo.jpg"
 import {
   iconBtnClass,
   navBranch,
+  filterNavByRole,
 } from "./navConfig";
 import {
   Tooltip,
@@ -22,8 +23,8 @@ type Props = {
 };
 
 export function SidebarNav({ collapsed, onToggle, onNavClick }: Props) {
-  const { logout } = useAuthStore();
-  const nav = navBranch
+  const { logout, user } = useAuthStore();
+  const nav = filterNavByRole(navBranch, user?.role as "admin_finance" | "production_operator" | "store_operator" | undefined);
 
   return (
     <TooltipProvider delayDuration={1000}>

@@ -11,6 +11,13 @@ import {
 } from "recharts";
 import { useDashboardData } from "../../useDashboardData";
 import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
+
+interface ChartPoint {
+  month: string;
+  sales: number;
+  expenses: number;
+}
 
 interface CustomTooltipProps extends TooltipProps<number, string> {
   active?: boolean;
@@ -23,16 +30,9 @@ interface CustomTooltipProps extends TooltipProps<number, string> {
   label?: string;
 }
 
-interface ColorMap {
-  total: string;
-  active: string;
-  trial: string;
-}
-
-const COLORS: ColorMap = {
-  total: "var(--primary)",
-  active: "var(--success)",
-  trial: "var(--warning)",
+const COLORS = {
+  sales: "var(--primary)",
+  expenses: "#EF4444",
 };
 
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
@@ -47,36 +47,24 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
             style={{ background: entry.color }}
           />
           <span className="text-gray-500">{entry.name}:</span>
-          <span className="font-semibold text-gray-900">{entry.value}</span>
+          <span className="font-semibold text-gray-900">₹{entry.value}</span>
         </div>
       ))}
     </div>
   );
 };
 
-interface LegendItem {
-  key: keyof ColorMap;
-  label: string;
-}
-
 const CustomLegend = () => {
-  const legendItems: LegendItem[] = [
-    { key: "total", label: "Total Organization" },
-    { key: "active", label: "Active Organization" },
-    { key: "trial", label: "Trial Organization" },
+  const items = [
+    { key: "sales" as const, label: "Sales" },
+    { key: "expenses" as const, label: "Expenses" },
   ];
 
   return (
     <div className="flex justify-center gap-7 mt-4 flex-wrap">
-      {legendItems.map(({ key, label }) => (
-        <span
-          key={key}
-          className="flex items-center gap-1.75 text-sm text-gray-500"
-        >
-          <span
-            className="w-3 h-3 rounded-full"
-            style={{ background: COLORS[key] }}
-          />
+      {items.map(({ key, label }) => (
+        <span key={key} className="flex items-center gap-1.75 text-sm text-gray-500">
+          <span className="w-3 h-3 rounded-full" style={{ background: COLORS[key] }} />
           {label}
         </span>
       ))}
@@ -84,26 +72,36 @@ const CustomLegend = () => {
   );
 };
 
+function formatMonth(value: string) {
+  try {
+    return format(new Date(value), "MMM yyyy");
+  } catch {
+    return value;
+  }
+}
+
 export default function OrganizationGrowthChart(): React.ReactElement {
   const { data, isLoading } = useDashboardData();
 
-  // Calculate dynamic domain and ticks
-  const getAxisConfig = () => {
-    const chartData = data?.charts.subscription_overview || [];
+  const chartData: ChartPoint[] =
+    data?.charts?.monthly_sales?.map((sale, index) => {
+      const expense = data?.charts?.monthly_expenses?.[index];
+      return {
+        month: formatMonth(sale.month),
+        sales: sale.total,
+        expenses: expense?.total || 0,
+      };
+    }) || [];
 
+  const getAxisConfig = () => {
     if (chartData.length === 0) {
       return { domain: [0, 100], ticks: [0, 20, 40, 60, 80, 100] };
     }
 
-    // Find max value across all series
     const maxValue = Math.max(
-      ...chartData.flatMap((d:any) => [d.total || 0, d.active || 0, d.trial || 0]),
+      ...chartData.flatMap((d) => [d.sales, d.expenses]),
     );
-
-    // Round up to nearest 20 for cleaner display
-    const roundedMax = Math.ceil(maxValue / 20) * 20;
-
-    // Generate evenly spaced ticks (5 ticks including 0)
+    const roundedMax = Math.ceil(maxValue / 100) * 100 || 100;
     const ticks = Array.from({ length: 6 }, (_, i) => (roundedMax / 5) * i);
 
     return {
@@ -118,23 +116,19 @@ export default function OrganizationGrowthChart(): React.ReactElement {
     <div className="bg-white w-full border border-neutral-200 p-5 sm:p-7 rounded-[14px]">
       <div className="flex items-center gap-2 mb-5">
         <h2 className="text-[16px] text-neutral-500 font-medium">
-          Organization Growth
+          Monthly Sales vs Expenses
         </h2>
-        <div
-          title="Organization growth metrics over time"
-          className="cursor-pointer"
-        >
+        <div title="Monthly sales and expenses trend" className="cursor-pointer">
           <InfoIcon className="text-neutral-400" size={16} />
         </div>
       </div>
 
-      {/* Chart */}
       {isLoading ? (
         <Skeleton className="h-[300px] w-full" />
       ) : (
-        <ResponsiveContainer width="100%" height={300} className={"mb-6"}>
+        <ResponsiveContainer width="100%" height={300} className="mb-6">
           <LineChart
-            data={data?.charts.subscription_overview || []}
+            data={chartData}
             margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
           >
             <CartesianGrid strokeDasharray="" stroke="#E5E7EB" />
@@ -156,30 +150,21 @@ export default function OrganizationGrowthChart(): React.ReactElement {
             <Tooltip content={<CustomTooltip />} />
             <Line
               type="linear"
-              dataKey="total"
-              name="Total Organization"
-              stroke={COLORS.total}
+              dataKey="sales"
+              name="Sales"
+              stroke={COLORS.sales}
               strokeWidth={2}
-              dot={{ r: 4, fill: COLORS.total, strokeWidth: 0 }}
-              activeDot={{ r: 6, fill: COLORS.total, strokeWidth: 0 }}
+              dot={{ r: 4, fill: COLORS.sales, strokeWidth: 0 }}
+              activeDot={{ r: 6, fill: COLORS.sales, strokeWidth: 0 }}
             />
             <Line
               type="linear"
-              dataKey="active"
-              name="Active Organization"
-              stroke={COLORS.active}
+              dataKey="expenses"
+              name="Expenses"
+              stroke={COLORS.expenses}
               strokeWidth={2}
-              dot={{ r: 4, fill: COLORS.active, strokeWidth: 0 }}
-              activeDot={{ r: 6, fill: COLORS.active, strokeWidth: 0 }}
-            />
-            <Line
-              type="linear"
-              dataKey="trial"
-              name="Trial Organization"
-              stroke={COLORS.trial}
-              strokeWidth={2}
-              dot={{ r: 4, fill: COLORS.trial, strokeWidth: 0 }}
-              activeDot={{ r: 6, fill: COLORS.trial, strokeWidth: 0 }}
+              dot={{ r: 4, fill: COLORS.expenses, strokeWidth: 0 }}
+              activeDot={{ r: 6, fill: COLORS.expenses, strokeWidth: 0 }}
             />
           </LineChart>
         </ResponsiveContainer>

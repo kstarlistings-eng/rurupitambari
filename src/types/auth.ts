@@ -1,14 +1,17 @@
-import type { TokenResponse } from "./token";
 import type { User } from "./user";
 
-type LoginInput = any;
+type LoginInput = {
+  email: string;
+  password: string;
+  rememberMe?: boolean;
+};
 
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  refreshTokenPromise: Promise<TokenResponse> | null;
+  refreshTokenPromise: Promise<string | null> | null;
   accessToken: string | null;
   refreshToken: string | null;
 
@@ -20,5 +23,5 @@ export interface AuthState {
   getUser: (isLoading?: boolean) => Promise<boolean>;
   clearError: () => void;
   checkAuth: () => boolean;
-  refreshTokenFn: () => Promise<TokenResponse | null>;
+  refreshTokenFn: () => Promise<string | null>;
 }

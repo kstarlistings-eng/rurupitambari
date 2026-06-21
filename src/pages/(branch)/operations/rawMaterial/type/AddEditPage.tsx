@@ -1,7 +1,7 @@
 import { Page } from "@/components/layout/page/PageLayout";
 import AddEditTop from "./components/AddEditTop";
-import StaffForm from "./components/StaffForm";
-import useStaffFormActions from "./useStaffFormActions";
+import MaterialForm from "./components/StaffForm";
+import useMaterialFormActions from "./useStaffFormActions";
 import { Loader } from "lucide-react";
 
 function AddEditPage() {
@@ -11,8 +11,8 @@ function AddEditPage() {
     onSubmit,
     isEditMode,
     isPending,
-  } = useStaffFormActions();
-  
+  } = useMaterialFormActions();
+
   if (isLoading) {
     return (
       <div className="h-full flex items-center justify-center">
@@ -32,7 +32,7 @@ function AddEditPage() {
           />
         </Page.Header>
         <Page.Content>
-          <StaffForm form={form}/>
+          <MaterialForm form={form} />
         </Page.Content>
       </Page.FormContainer>
     </Page>

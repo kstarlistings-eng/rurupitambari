@@ -3,8 +3,7 @@ import AuthRedirectGuard from "@/components/guards/AuthRedirectGuard";
 import AuthRequiredGuard from "@/components/guards/AuthRequiredGuard";
 import LoginGuard from "@/components/guards/LoginGuard";
 import Sidebar from "@/components/layout/sidebar/SideBar";
-import CustomerPage from "@/pages/(branch)/management/customer/CustomerPage";
-import CustomerAddEditPage from "@/pages/(branch)/management/customer/type/AddEditPage";
+
 import StaffPage from "@/pages/(branch)/management/staff/StaffPage";
 import StaffAddEditPage from "@/pages/(branch)/management/staff/type/AddEditPage";
 import MaterialAddEditPage from "@/pages/(branch)/operations/rawMaterial/type/AddEditPage";
@@ -20,6 +19,15 @@ import ProductAddEditPage from "@/pages/(branch)/catalog/products/type/ProductAd
 import RawMaterialPage from "./pages/(branch)/operations/rawMaterial/MaterialPage";
 import ProductionPage from "./pages/(branch)/operations/productions/ProductionPage";
 import DashBoardPage from "./pages/(branch)/dashboard";
+import ExpensePage from "./pages/(branch)/operations/expenses/ExpensePage";
+import ExpenseAddEditPage from "./pages/(branch)/operations/expenses/type/AddEditPage";
+import FinishedGoodPage from "./pages/(branch)/warehouse/finishedGoods/FinishedGoodPage";
+import TransferPage from "./pages/(branch)/warehouse/transfers/TransferPage";
+import SellerPage from "./pages/(branch)/distribution/sellers/SellerPage";
+import SellerAddEditPage from "./pages/(branch)/distribution/sellers/type/AddEditPage";
+import SalesDispatchPage from "./pages/(branch)/distribution/salesDispatch/SalesDispatchPage";
+import SalesDispatchAddEditPage from "./pages/(branch)/distribution/salesDispatch/type/AddEditPage";
+import InvoicePage from "./pages/(branch)/billing/invoices/InvoicePage";
 
 const routerBranch = createBrowserRouter([
   {
@@ -34,7 +42,7 @@ const routerBranch = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <DashBoardPage/>,
+        element: <DashBoardPage />,
       },
       {
         path: "raw-material",
@@ -53,21 +61,41 @@ const routerBranch = createBrowserRouter([
         element: <ProductionAddEditPage />,
       },
       {
-        path: "store",
-        element: <CustomerPage />,
+        path: "expenses",
+        element: <ExpensePage />,
       },
       {
-        path: "store/:type",
-        element: <CustomerAddEditPage />,
+        path: "expenses/:type",
+        element: <ExpenseAddEditPage />,
       },
-      // {
-      //   path: "appointments",
-      //   element: <AppointmentPage />,
-      // },
-      // {
-      //   path: "appointments/:type",
-      //   element: <AppointmentAddEditPage />,
-      // },
+      {
+        path: "store",
+        element: <FinishedGoodPage />,
+      },
+      {
+        path: "store/transfers",
+        element: <TransferPage />,
+      },
+      {
+        path: "sellers",
+        element: <SellerPage />,
+      },
+      {
+        path: "sellers/:type",
+        element: <SellerAddEditPage />,
+      },
+      {
+        path: "sales-dispatch",
+        element: <SalesDispatchPage />,
+      },
+      {
+        path: "sales-dispatch/:type",
+        element: <SalesDispatchAddEditPage />,
+      },
+      {
+        path: "billing/invoices",
+        element: <InvoicePage />,
+      },
       {
         path: "staff",
         element: <StaffPage />,
@@ -125,4 +153,3 @@ const routerBranch = createBrowserRouter([
 ]);
 
 export { routerBranch };
-

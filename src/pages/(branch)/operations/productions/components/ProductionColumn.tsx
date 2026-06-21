@@ -1,118 +1,28 @@
 import {
   DeleteOrganizationModal,
-  // type deleteModalText,
 } from "@/components/globalModels/deleteModel";
-// import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuGroup,
-//   DropdownMenuItem,
-//   DropdownMenuTrigger,
-// } from "@/components/ui/dropdown-menu";
-// import { cn } from "@/lib/utils";
 import type { ColumnDef } from "@tanstack/react-table";
-// import { ChevronDown, Edit, Loader } from "lucide-react";
 import { Edit } from "lucide-react";
 import { Link } from "react-router";
-
-// import { notify } from "@/components/toast/NotifyToast";
 import { authInstance } from "@/config/axios-interceptor";
-// import { branchEndpoints } from "@/config/endpoints";
-// import { staffKeys } from "@/config/querykeys/(branchKeys)/managementKeys";
-import { format } from "date-fns"; 
-// import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { ProductionOrder } from "@/schema/(branchSchema)/operations/production";
+import { operationsEndpoints } from "@/config/endpoints";
+import { productionKeys } from "@/config/querykeys/(branchKeys)/operationsKeys";
+import { format } from "date-fns";
 
-// const statusStyles: Record<string, string> = {
-//   active: "bg-green-50 text-green-600 border-green-200",
-//   inactive: "bg-destructive-50 text-destructive-600 border-destructive-200",
-// };
+type ProductionOrderRow = {
+  id: string;
+  batch_number: string;
+  product_name: string;
+  quantity_produced: number;
+  production_date: string;
+  shift: string;
+  supervisor_name: string;
+  machine_line_number: string;
+  status: string;
+};
 
-// function StatusDropdown({
-//   status,
-//   onStatusChange,
-//   isUpdating,
-// }: {
-//   status: string;
-//   onStatusChange?: (val: string) => void;
-//   isUpdating?: boolean;
-// }) {
-//   return (
-//     <DropdownMenu>
-//       <DropdownMenuTrigger asChild>
-//         <Button
-//           variant="outline"
-//           className={cn(
-//             "capitalize gap-1 px-3 py-1 h-8 text-sm font-medium rounded-full",
-//             statusStyles[status],
-//           )}
-//           disabled={isUpdating}
-//         >
-//           {status}
-//           {isUpdating ? (
-//             <Loader className="animate-spin h-3.5 w-3.5" />
-//           ) : (
-//             <ChevronDown className="h-3.5 w-3.5" />
-//           )}
-//         </Button>
-//       </DropdownMenuTrigger>
-//       <DropdownMenuContent>
-//         <DropdownMenuGroup>
-//           {["active", "inactive"].map((opt) => (
-//             <DropdownMenuItem
-//               key={opt}
-//               onSelect={() => onStatusChange?.(opt)}
-//               className="capitalize"
-//             >
-//               {opt}
-//               {opt === status && (
-//                 <span className="ms-auto text-green-500">✓</span>
-//               )}
-//             </DropdownMenuItem>
-//           ))}
-//         </DropdownMenuGroup>
-//       </DropdownMenuContent>
-//     </DropdownMenu>
-//   );
-// }
-
-// function ActiveInactive({ status, id }: { status: string; id: number }) {
-//   const queryClient = useQueryClient();
-//   const statusChangeMutation = useMutation({
-//     mutationFn: async (newStatus: string) => {
-//       await authInstance.patch(`${branchEndpoints.STAFF}${id}/`, {
-//         is_active: newStatus === "active",
-//       });
-//     },
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: [staffKeys.ALL_STAFF] });
-//     },
-//     onError: (error) => {
-//       notify({
-//         title: "Error",
-//         message: error?.message || "Failed to update status. Please try again.",
-//         variant: "error",
-//       });
-//     },
-//   });
-//   return (
-//     <StatusDropdown
-//       isUpdating={statusChangeMutation.isPending}
-//       status={status}
-//       onStatusChange={(newStatus) => {
-//         if (newStatus !== status) {
-//           statusChangeMutation.mutate(newStatus);
-//         }
-//       }}
-//     />
-//   );
-// }
-
-
-
-export const productionColumns: ColumnDef<ProductionOrder>[] = [
+export const productionColumns: ColumnDef<ProductionOrderRow>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -138,10 +48,10 @@ export const productionColumns: ColumnDef<ProductionOrder>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "productionDate",
+    accessorKey: "production_date",
     header: "PRODUCTION DATE",
     cell: ({ row }) => {
-      const date = row.original.productionDate;
+      const date = row.original.production_date;
       return (
         <span className="text-sm text-muted-foreground">
           {date ? format(new Date(date), "PPP") : "—"}
@@ -150,12 +60,34 @@ export const productionColumns: ColumnDef<ProductionOrder>[] = [
     },
   },
   {
-    accessorKey: "batchNumber",
+    accessorKey: "batch_number",
     header: "BATCH / ORDER ID",
     cell: ({ row }) => {
       return (
         <span className="font-bold text-primary">
-          {row.original.batchNumber || "—"}
+          {row.original.batch_number || "—"}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "product_name",
+    header: "PRODUCT",
+    cell: ({ row }) => {
+      return (
+        <span className="text-muted-foreground">
+          {row.original.product_name || "—"}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "quantity_produced",
+    header: "QTY PRODUCED",
+    cell: ({ row }) => {
+      return (
+        <span className="text-muted-foreground">
+          {row.original.quantity_produced ?? "—"}
         </span>
       );
     },
@@ -164,10 +96,10 @@ export const productionColumns: ColumnDef<ProductionOrder>[] = [
     accessorKey: "production_details",
     header: "SHIFT & SUPERVISOR",
     cell: ({ row }) => {
-      const { shift, supervisorName } = row.original;
+      const { shift, supervisor_name } = row.original;
       return (
         <div className="flex flex-col">
-          <span className="font-medium">{supervisorName || "—"}</span>
+          <span className="font-medium">{supervisor_name || "—"}</span>
           <span className="text-xs px-2 py-0.5 rounded-full bg-secondary w-fit mt-1">
             {shift}
           </span>
@@ -176,12 +108,23 @@ export const productionColumns: ColumnDef<ProductionOrder>[] = [
     },
   },
   {
-    accessorKey: "machineLineNumber",
+    accessorKey: "machine_line_number",
     header: "MACHINE / LINE",
     cell: ({ row }) => {
       return (
         <span className="text-muted-foreground">
-          {row.original.machineLineNumber || "—"}
+          {row.original.machine_line_number || "—"}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "status",
+    header: "STATUS",
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs px-2 py-0.5 rounded-full bg-primary-50 text-primary-700 w-fit capitalize">
+          {(row.original.status || "pending_transfer").replace("_", " ")}
         </span>
       );
     },
@@ -200,22 +143,21 @@ export const productionColumns: ColumnDef<ProductionOrder>[] = [
 
       return (
         <div className="flex items-center gap-3">
-          <Link 
-            to={`/production/edit`} 
-            state={{ batchId: row.original.batchNumber }}
+          <Link
+            to={`/production/edit`}
+            state={{ productionOrderId: row.original.id }}
           >
             <Edit className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
             <span className="sr-only">Edit batch</span>
           </Link>
           <DeleteOrganizationModal
             onConfirm={async () => {
-              // Updated endpoint to reflect production context
               await authInstance.delete(
-                `/production/batch/${row.original.batchNumber}/`,
+                `${operationsEndpoints.PRODUCTION_ORDERS}${row.original.id}/`,
               );
             }}
             dialogText={deleteDialogText}
-            invalidateKey={["PRODUCTION_LIST"]}
+            invalidateKey={[productionKeys.ALL_PRODUCTION_ORDERS]}
             confirmText="Delete"
           />
         </div>

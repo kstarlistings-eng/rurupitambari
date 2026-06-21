@@ -10,4 +10,22 @@ const branchEndpoints = {
   PRODUCT_BATCHES: "/branch_catalog/product-batches/",
 };
 
-export {branchEndpoints};
+const operationsEndpoints = {
+  RAW_MATERIALS: "/raw-materials/",
+  EXPENSES: "/expenses/",
+  PRODUCTION_ORDERS: "/production-orders/",
+  TRANSFERS: "/transfers/",
+  FINISHED_GOODS: "/finished-goods/",
+};
+
+const salesEndpoints = {
+  SELLERS: "/sellers/",
+  SALES_DISPATCHES: "/sales-dispatches/",
+  INVOICES: "/invoices/",
+};
+
+const dashboardEndpoints = {
+  DASHBOARD: "/dashboard/",
+};
+
+export { branchEndpoints, operationsEndpoints, salesEndpoints, dashboardEndpoints };

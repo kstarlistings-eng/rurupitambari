@@ -1,73 +1,78 @@
-# React + TypeScript + Vite
+# Ruru Pitambari
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Inventory, production, and sales management system with role-based access.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS, shadcn/ui, TanStack Query, Zustand
+- **Backend:** Node.js, Express, PostgreSQL
+- **Auth:** JWT access + refresh tokens
 
-## React Compiler
+## Roles
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Role | Permissions |
+|------|-------------|
+| Admin/Finance | Full access to all modules and financial data |
+| Production Operator | Raw material inventory + production logging only |
+| Store Operator | Finished goods inventory + receive transfers only |
 
-## Expanding the ESLint configuration
+## Quick Start
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 1. Start the backend
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+cd backend
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Option A: using Docker (if your user has Docker permissions)
+docker compose up -d
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Option B: using a local PostgreSQL cluster on port 5433
+# (see backend/README.md for full local setup commands)
+
+npm install
+npm run migrate:up
+npm run seed
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Backend runs at `http://localhost:5000`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 2. Start the frontend
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# from project root
+npm install
+npm run dev
+```
+
+Frontend runs at `http://localhost:5173` (or the next available port).
+
+### 3. Login
+
+Use one of the seeded accounts:
+
+| Email | Password | Role |
+|-------|----------|------|
+| `admin@pitambari.com` | `admin123` | Admin/Finance |
+| `production@pitambari.com` | `production123` | Production Operator |
+| `store@pitambari.com` | `store123` | Store Operator |
+
+## Workflows
+
+1. **Procurement:** Admin creates an Expense → raw material stock increases.
+2. **Production:** Production Operator creates a Production Order → raw material stock decreases and a pending Transfer is created.
+3. **Receive Goods:** Store Operator receives the Transfer → finished goods stock increases.
+4. **Sales:** Admin onboards a Seller and creates a Sales Dispatch → finished goods stock decreases and an Invoice is generated.
+
+## Project Structure
+
+```
+/backend          Node.js/Express API
+/src              React frontend
+  /components     UI components
+  /pages          Page components
+  /schema         Zod validation schemas
+  /services       API service functions
+  /store          Zustand stores
+  /config         Endpoints, query keys, axios config
 ```

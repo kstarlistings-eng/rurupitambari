@@ -29,7 +29,6 @@ export const loginSchema = z
       .min(1, { message: "Email is required" }),
     password: z.string().min(1, { message: "Password is required" }),
     rememberMe: z.boolean().optional(),
-    branch_id: z.number().optional(),
   })
   .transform((data) => ({
     ...data,

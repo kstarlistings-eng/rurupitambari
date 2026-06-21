@@ -1,13 +1,19 @@
 import {
   Building2Icon,
-  Calendar,
-  Clock4Icon,
-  PauseCircleIcon,
-  UserCheck2Icon,
-  Users2Icon,
+  PackageIcon,
+  StoreIcon,
+  TruckIcon,
+  UsersIcon,
+  CreditCardIcon,
 } from "lucide-react";
 import DashboardCard, { DashboardCardSkeleton } from "./DashboardCard";
 import { useDashboardData } from "../useDashboardData";
+
+function formatNumber(num: number) {
+  return new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 2,
+  }).format(num);
+}
 
 function DashboardCardSection() {
   const { data, isLoading } = useDashboardData();
@@ -21,8 +27,9 @@ function DashboardCardSection() {
       ) : (
         <>
           <DashboardCard
-            title={"Raw Materails Data"}
-            value={stats?.organizations?.total || 0}
+            title="Raw Materials"
+            value={stats?.raw_materials?.count || 0}
+            subtitle={`${formatNumber(stats?.raw_materials?.total_quantity || 0)} in stock`}
             icon={
               <Building2Icon
                 className="p-2 text-primary bg-primary-50 rounded-lg"
@@ -31,50 +38,55 @@ function DashboardCardSection() {
             }
           />
           <DashboardCard
-            title={"Production Data"}
-            value={stats?.organizations?.active || 0}
+            title="Production Orders"
+            value={stats?.production?.count || 0}
+            subtitle={`${formatNumber(stats?.production?.total_quantity || 0)} produced`}
             icon={
-              <UserCheck2Icon
+              <PackageIcon
                 className="p-2 text-success-500 bg-success-50 rounded-lg"
                 size={48}
               />
             }
           />
           <DashboardCard
-            title={"Store Data"}
-            value={stats?.organizations?.trial || 0}
+            title="Finished Goods"
+            value={stats?.finished_goods?.count || 0}
+            subtitle={`${formatNumber(stats?.finished_goods?.total_quantity || 0)} in store`}
             icon={
-              <Calendar
+              <StoreIcon
                 className="p-2 text-warning-500 bg-warning-50 rounded-lg"
                 size={48}
               />
             }
           />
           <DashboardCard
-            title={"Stock Data"}
-            value={stats?.organizations?.suspended || 0}
+            title="Pending Transfers"
+            value={stats?.pending_transfers?.count || 0}
+            subtitle="awaiting receipt"
             icon={
-              <PauseCircleIcon
+              <TruckIcon
                 className="p-2 text-destructive-500 bg-destructive-50 rounded-lg"
                 size={48}
               />
             }
           />
           <DashboardCard
-            title={"Market Data"}
-            value={stats?.users?.total || 0}
+            title="Sellers"
+            value={stats?.sellers?.count || 0}
+            subtitle="active dealers"
             icon={
-              <Users2Icon
+              <UsersIcon
                 className="p-2 text-[#0EA5E9] bg-[#F0F9FF] rounded-lg"
                 size={48}
               />
             }
           />
           <DashboardCard
-            title={"Earnings Data"}
-            value={stats?.organizations?.expiring_soon || 0}
+            title="Total Sales"
+            value={`₹${formatNumber(stats?.invoices?.total_value || 0)}`}
+            subtitle={`${stats?.invoices?.count || 0} invoices`}
             icon={
-              <Clock4Icon
+              <CreditCardIcon
                 className="p-2 text-[#7C3AED] bg-[#F5F3FF] rounded-lg"
                 size={48}
               />

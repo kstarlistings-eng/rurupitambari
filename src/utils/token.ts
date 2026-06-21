@@ -6,11 +6,11 @@ import {
 import { jwtDecode } from "jwt-decode";
 
 export const getToken = (key: string): string | undefined => {
-  return localStorage.get(key);
+  return localStorage.getItem(key) || undefined;
 };
 
 export const createToken = (key: string, value: string): void => {
-  localStorage.set(key, value);
+  localStorage.setItem(key, value);
 };
 
 export const deleteToken = (key: string): void => {
@@ -18,8 +18,7 @@ export const deleteToken = (key: string): void => {
 };
 
 export const verifyRefreshToken = async () => {
-  // 2️⃣ Call refresh API
-  const response = await fetch(baseURL + "/refresh-token/", {
+  const response = await fetch(baseURL + "/auth/refresh", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -31,10 +30,10 @@ export const verifyRefreshToken = async () => {
 
   const data = await response.json();
   if (response.ok) {
-    return data.access;
+    return data.access_token;
   }
 
-  throw new Error(data.detail || "Failed to refresh token");
+  throw new Error(data.error || "Failed to refresh token");
 };
 
 export const isTokenExpiredClient = (token?: string): boolean => {

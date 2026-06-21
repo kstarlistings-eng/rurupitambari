@@ -1,14 +1,14 @@
 import { notify } from "@/components/toast/NotifyToast";
 import { authInstance } from "@/config/axios-interceptor";
-import { branchEndpoints } from "@/config/endpoints";
-import { staffKeys } from "@/config/querykeys/(branchKeys)/managementKeys";
+import { operationsEndpoints } from "@/config/endpoints";
+import { rawMaterialKeys } from "@/config/querykeys/(branchKeys)/operationsKeys";
 import {
-  StaffAddFormSchema,
-  StaffDefaultValues,
-  StaffEditFormSchema,
-  type StaffAddFormSchemaType,
-  type StaffEditFormSchemaType,
-} from "@/schema/(branchSchema)/management/StaffSchema";
+  MaterialAddSchema,
+  MaterialDefaultValues,
+  MaterialEditSchema,
+  type MaterialAdd as MaterialAddType,
+  type MaterialEdit as MaterialEditType,
+} from "@/schema/(branchSchema)/operations/material";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -18,101 +18,99 @@ import { useLocation, useNavigate, useParams } from "react-router";
 function useMaterialFormActions() {
   const queryClient = useQueryClient();
   const location = useLocation();
-  const { staffId } = location.state || {};
+  const { materialId } = location.state || {};
 
   const { type } = useParams();
   const isEditMode = type === "edit";
 
   const form = useForm({
-    defaultValues: StaffDefaultValues,
-    resolver: zodResolver(
-      isEditMode ? StaffEditFormSchema : StaffAddFormSchema,
-    ),
+    defaultValues: MaterialDefaultValues,
+    resolver: zodResolver(isEditMode ? MaterialEditSchema : MaterialAddSchema),
   });
 
-  const editStaffMutation = useMutation({
-    mutationFn: async (formData: StaffEditFormSchemaType) => {
+  const navigate = useNavigate();
+
+  const editMaterialMutation = useMutation({
+    mutationFn: async (formData: MaterialEditType) => {
       return await authInstance.patch(
-        `${branchEndpoints.STAFF}${staffId}/`,
+        `${operationsEndpoints.RAW_MATERIALS}${materialId}/`,
         formData,
       );
     },
     onSuccess: () => {
       notify({
-        title: "Staff Updated",
-        message: "The staff has been updated successfully.",
+        title: "Material Updated",
+        message: "The material has been updated successfully.",
         variant: "success",
       });
       form.reset();
-      queryClient.invalidateQueries({ queryKey: [staffKeys.ALL_STAFF] });
-      navigate("/staff");
+      queryClient.invalidateQueries({ queryKey: [rawMaterialKeys.ALL_RAW_MATERIALS] });
+      navigate("/raw-material");
     },
     onError: (error) => {
       notify({
-        title: "Error Updating Staff",
+        title: "Error Updating Material",
         message:
           error?.message ||
-          "There was an error updating the staff. Please try again.",
+          "There was an error updating the material. Please try again.",
         variant: "error",
       });
     },
   });
-  const navigate = useNavigate();
 
-  const addStaffMutation = useMutation({
-    mutationFn: async (formData: StaffAddFormSchemaType) => {
-      return await authInstance.post(`${branchEndpoints.STAFF}`, formData);
+  const addMaterialMutation = useMutation({
+    mutationFn: async (formData: MaterialAddType) => {
+      return await authInstance.post(`${operationsEndpoints.RAW_MATERIALS}`, formData);
     },
     onSuccess: () => {
       notify({
-        title: "Staff Added",
-        message: "The Staff has been added successfully.",
+        title: "Material Added",
+        message: "The material has been added successfully.",
         variant: "success",
       });
       form.reset();
-      queryClient.invalidateQueries({ queryKey: [staffKeys.ALL_STAFF] });
-      navigate("/staff");
+      queryClient.invalidateQueries({ queryKey: [rawMaterialKeys.ALL_RAW_MATERIALS] });
+      navigate("/raw-material");
     },
     onError: (error) => {
       notify({
-        title: "Error Adding Staff",
+        title: "Error Adding Material",
         message:
           error?.message ||
-          "There was an error adding the Staff. Please try again.",
+          "There was an error adding the material. Please try again.",
         variant: "error",
       });
     },
   });
 
   const onSubmit = (
-    formData: StaffAddFormSchemaType | StaffEditFormSchemaType,
+    formData: MaterialAddType | MaterialEditType,
   ) => {
     if (isEditMode) {
-      editStaffMutation.mutate(formData);
+      editMaterialMutation.mutate(formData as MaterialEditType);
     } else {
-      addStaffMutation.mutate(formData as StaffAddFormSchemaType);
+      addMaterialMutation.mutate(formData as MaterialAddType);
     }
   };
 
   const { data, isLoading, ...rest } = useQuery({
-    queryKey: [staffKeys.ALL_STAFF, staffId],
+    queryKey: [rawMaterialKeys.RAW_MATERIAL_DETAIL, materialId],
     queryFn: async () => {
       const response = await authInstance.get(
-        `${branchEndpoints.STAFF}${staffId}/`,
+        `${operationsEndpoints.RAW_MATERIALS}${materialId}/`,
       );
       return response;
     },
-    enabled: isEditMode && !!staffId,
+    enabled: isEditMode && !!materialId,
   });
 
   useEffect(() => {
     if (data) {
       form.reset({
-        ...data,
-        gender: data?.gender || undefined,
-        date_of_birth: data?.date_of_birth || undefined,
-        address: data?.address || undefined,
-        note: data?.note || undefined,
+        material_id: data?.material_id || "",
+        material_name: data?.material_name || "",
+        category: data?.category || undefined,
+        uom: data?.uom || undefined,
       });
     }
   }, [data, form]);
@@ -122,7 +120,7 @@ function useMaterialFormActions() {
     onSubmit,
     isEditMode,
     data: { data, isLoading, ...rest },
-    isPending: editStaffMutation.isPending || addStaffMutation.isPending,
+    isPending: editMaterialMutation.isPending || addMaterialMutation.isPending,
   };
 }
 

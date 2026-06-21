@@ -1,128 +1,117 @@
 import { notify } from "@/components/toast/NotifyToast";
 import { authInstance } from "@/config/axios-interceptor";
-import { branchEndpoints } from "@/config/endpoints";
-import { staffKeys } from "@/config/querykeys/(branchKeys)/managementKeys";
+import { operationsEndpoints } from "@/config/endpoints";
+import { productionKeys, rawMaterialKeys, transferKeys } from "@/config/querykeys/(branchKeys)/operationsKeys";
 import {
-  StaffAddFormSchema,
-  StaffDefaultValues,
-  StaffEditFormSchema,
-  type StaffAddFormSchemaType,
-  type StaffEditFormSchemaType,
-} from "@/schema/(branchSchema)/management/StaffSchema";
+  ProductionOrderSchema,
+  ProductionOrderDefaultValues,
+  type ProductionOrder,
+} from "@/schema/(branchSchema)/operations/production";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { useLocation, useNavigate, useParams } from "react-router";
 
 function useProductionFormActions() {
   const queryClient = useQueryClient();
   const location = useLocation();
-  const { staffId } = location.state || {};
+  const { productionOrderId } = location.state || {};
 
   const { type } = useParams();
   const isEditMode = type === "edit";
 
-  const form = useForm({
-    defaultValues: StaffDefaultValues,
-    resolver: zodResolver(
-      isEditMode ? StaffEditFormSchema : StaffAddFormSchema,
-    ),
+  const form = useForm<ProductionOrder>({
+    defaultValues: ProductionOrderDefaultValues,
+    resolver: zodResolver(ProductionOrderSchema),
   });
 
-  const editStaffMutation = useMutation({
-    mutationFn: async (formData: StaffEditFormSchemaType) => {
-      return await authInstance.patch(
-        `${branchEndpoints.STAFF}${staffId}/`,
-        formData,
-      );
-    },
-    onSuccess: () => {
-      notify({
-        title: "Staff Updated",
-        message: "The staff has been updated successfully.",
-        variant: "success",
-      });
-      form.reset();
-      queryClient.invalidateQueries({ queryKey: [staffKeys.ALL_STAFF] });
-      navigate("/staff");
-    },
-    onError: (error) => {
-      notify({
-        title: "Error Updating Staff",
-        message:
-          error?.message ||
-          "There was an error updating the staff. Please try again.",
-        variant: "error",
-      });
-    },
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "consumptions",
   });
+
   const navigate = useNavigate();
 
-  const addStaffMutation = useMutation({
-    mutationFn: async (formData: StaffAddFormSchemaType) => {
-      return await authInstance.post(`${branchEndpoints.STAFF}`, formData);
+  const addProductionMutation = useMutation({
+    mutationFn: async (formData: ProductionOrder) => {
+      const payload = {
+        ...formData,
+        production_date: formData.productionDate,
+        quantity_produced: formData.quantityProduced,
+        product_name: formData.productName,
+        batch_number: formData.batchNumber,
+        supervisor_name: formData.supervisorName,
+        machine_line_number: formData.machineLineNumber,
+        consumptions: formData.consumptions,
+      };
+      return await authInstance.post(`${operationsEndpoints.PRODUCTION_ORDERS}`, payload);
     },
     onSuccess: () => {
       notify({
-        title: "Staff Added",
-        message: "The Staff has been added successfully.",
+        title: "Production Order Created",
+        message: "The production order has been created successfully.",
         variant: "success",
       });
       form.reset();
-      queryClient.invalidateQueries({ queryKey: [staffKeys.ALL_STAFF] });
-      navigate("/staff");
+      queryClient.invalidateQueries({ queryKey: [productionKeys.ALL_PRODUCTION_ORDERS] });
+      queryClient.invalidateQueries({ queryKey: [rawMaterialKeys.ALL_RAW_MATERIALS] });
+      queryClient.invalidateQueries({ queryKey: [transferKeys.ALL_TRANSFERS] });
+      navigate("/production");
     },
     onError: (error) => {
       notify({
-        title: "Error Adding Staff",
+        title: "Error Creating Production Order",
         message:
           error?.message ||
-          "There was an error adding the Staff. Please try again.",
+          "There was an error creating the production order. Please try again.",
         variant: "error",
       });
     },
   });
 
-  const onSubmit = (
-    formData: StaffAddFormSchemaType | StaffEditFormSchemaType,
-  ) => {
-    if (isEditMode) {
-      editStaffMutation.mutate(formData);
-    } else {
-      addStaffMutation.mutate(formData as StaffAddFormSchemaType);
-    }
-  };
-
   const { data, isLoading, ...rest } = useQuery({
-    queryKey: [staffKeys.ALL_STAFF, staffId],
+    queryKey: [productionKeys.PRODUCTION_ORDER_DETAIL, productionOrderId],
     queryFn: async () => {
       const response = await authInstance.get(
-        `${branchEndpoints.STAFF}${staffId}/`,
+        `${operationsEndpoints.PRODUCTION_ORDERS}${productionOrderId}/`,
       );
       return response;
     },
-    enabled: isEditMode && !!staffId,
+    enabled: isEditMode && !!productionOrderId,
   });
 
   useEffect(() => {
     if (data) {
       form.reset({
-        ...data,
-        gender: data?.gender || undefined,
-        date_of_birth: data?.date_of_birth || undefined,
-        address: data?.address || undefined,
-        note: data?.note || undefined,
+        batchNumber: data?.batch_number || "",
+        productName: data?.product_name || "",
+        quantityProduced: Number(data?.quantity_produced) || 0,
+        productionDate: data?.production_date || undefined,
+        shift: data?.shift || undefined,
+        supervisorName: data?.supervisor_name || "",
+        machineLineNumber: data?.machine_line_number || "",
+        consumptions: data?.consumptions?.map((c: any) => ({
+          raw_material_id: c.raw_material_id,
+          quantity_consumed: Number(c.quantity_consumed),
+        })) || [{ raw_material_id: "", quantity_consumed: 0 }],
       });
     }
   }, [data, form]);
+
+  const onSubmit = (formData: ProductionOrder) => {
+    addProductionMutation.mutate(formData);
+  };
 
   return {
     form,
     onSubmit,
     isEditMode,
+    fields,
+    append,
+    remove,
     data: { data, isLoading, ...rest },
-    isPending: editStaffMutation.isPending || addStaffMutation.isPending,
+    isPending: addProductionMutation.isPending,
   };
 }
 

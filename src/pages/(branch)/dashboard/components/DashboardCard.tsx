@@ -3,12 +3,13 @@ import { cn } from "@/lib/utils";
 
 type Props = {
   title: string;
-  value: number;
+  value: number | string;
+  subtitle?: string;
   icon: React.ReactNode;
   className?: string;
 };
 
-function DashboardCard({ title, value, icon, className }: Props) {
+function DashboardCard({ title, value, subtitle, icon, className }: Props) {
   return (
     <div
       className={cn(
@@ -18,9 +19,14 @@ function DashboardCard({ title, value, icon, className }: Props) {
     >
       <h3 className="text-sm text-neutral-700">{title}</h3>
       <div className="flex items-center justify-between">
-        <span className="block font-semibold text-neutral-700 text-[32px] tracking-[-0.64px]">
-          {value}
-        </span>
+        <div className="flex flex-col">
+          <span className="block font-semibold text-neutral-700 text-[32px] tracking-[-0.64px]">
+            {value}
+          </span>
+          {subtitle && (
+            <span className="text-xs text-neutral-500">{subtitle}</span>
+          )}
+        </div>
         <div>{icon}</div>
       </div>
     </div>
