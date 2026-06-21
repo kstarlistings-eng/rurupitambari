@@ -4,7 +4,12 @@ import { z } from "zod";
 dotenv.config();
 
 const envSchema = z.object({
+  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   PORT: z.string().default("5000"),
+  FRONTEND_URL: z
+    .string()
+    .transform((val) => (val.trim() === "" ? undefined : val))
+    .pipe(z.string().url().optional()),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   JWT_ACCESS_SECRET: z.string().min(1, "JWT_ACCESS_SECRET is required"),
   JWT_REFRESH_SECRET: z.string().min(1, "JWT_REFRESH_SECRET is required"),

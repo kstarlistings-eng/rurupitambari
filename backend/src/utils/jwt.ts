@@ -9,13 +9,13 @@ export type UserPayload = {
 
 export function signAccessToken(payload: UserPayload): string {
   return jwt.sign(payload, env.JWT_ACCESS_SECRET, {
-    expiresIn: env.ACCESS_TOKEN_EXPIRY,
+    expiresIn: env.ACCESS_TOKEN_EXPIRY as jwt.SignOptions["expiresIn"],
   });
 }
 
 export function signRefreshToken(payload: UserPayload): string {
   return jwt.sign(payload, env.JWT_REFRESH_SECRET, {
-    expiresIn: env.REFRESH_TOKEN_EXPIRY,
+    expiresIn: env.REFRESH_TOKEN_EXPIRY as jwt.SignOptions["expiresIn"],
   });
 }
 

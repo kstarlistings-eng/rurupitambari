@@ -16,7 +16,14 @@ import dashboardRoutes from "./modules/dashboard/dashboard.routes.js";
 
 const app = express();
 
-app.use(cors({ origin: true, credentials: true }));
+// CORS: allow the configured frontend URL in production, or any origin during
+// local development. If FRONTEND_URL is not set we fall back to the permissive
+// default to keep local development working.
+const corsOrigin = env.FRONTEND_URL
+  ? [env.FRONTEND_URL]
+  : true;
+
+app.use(cors({ origin: corsOrigin, credentials: true }));
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => {
@@ -38,6 +45,13 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use(errorHandler);
 
 const PORT = Number(env.PORT);
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+
+// Start the HTTP server when running locally. When deployed to Vercel the
+// platform handles the server and imports the exported `app` instead.
+if (process.env.VERCEL !== "1") {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+export default app;
