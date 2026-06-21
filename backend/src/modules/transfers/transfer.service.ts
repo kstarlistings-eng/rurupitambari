@@ -38,8 +38,11 @@ export async function listTransfers(query: Request["query"]) {
 
   values.push(limit, offset);
   const result = await pool.query(
-    `SELECT t.*,
-            po.batch_number, po.product_name, po.quantity_produced,
+    `SELECT t.id, t.production_order_id, t.quantity AS quantity_transferred,
+            t.status, t.transferred_at, t.received_at, t.received_by,
+            po.batch_number AS production_order_batch_number,
+            po.product_name,
+            po.quantity_produced,
             u.first_name || ' ' || u.last_name as received_by_name
      FROM transfers t
      JOIN production_orders po ON t.production_order_id = po.id
@@ -55,8 +58,11 @@ export async function listTransfers(query: Request["query"]) {
 
 export async function getTransferById(id: string) {
   const result = await pool.query(
-    `SELECT t.*,
-            po.batch_number, po.product_name, po.quantity_produced
+    `SELECT t.id, t.production_order_id, t.quantity AS quantity_transferred,
+            t.status, t.transferred_at, t.received_at, t.received_by,
+            po.batch_number AS production_order_batch_number,
+            po.product_name,
+            po.quantity_produced
      FROM transfers t
      JOIN production_orders po ON t.production_order_id = po.id
      WHERE t.id = $1`,
