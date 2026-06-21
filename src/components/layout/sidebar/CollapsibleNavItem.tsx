@@ -35,6 +35,7 @@ export function CollapsibleNavItem({
     return (
       <NavLink
         to={item.link}
+        end
         onClick={() => onNavClick?.(item.id)}
         className={({ isActive }) =>
           `flex items-center relative whitespace-nowrap overflow-hidden w-full rounded-xl border-none cursor-pointer transition-[background,color] duration-150 font-medium text-sm hover:bg-primary-50 hover:text-primary-700 px-3 ${
