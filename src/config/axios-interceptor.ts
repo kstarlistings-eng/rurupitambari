@@ -15,7 +15,15 @@ import {
   verifyRefreshToken,
 } from "@/utils/token";
 
-export const baseURL = import.meta.env.VITE_API_URL + "/api";
+const apiUrl = import.meta.env.VITE_API_URL;
+
+if (!apiUrl) {
+  throw new Error(
+    "VITE_API_URL is not defined. Make sure the environment variable is set before building the frontend."
+  );
+}
+
+export const baseURL = apiUrl.replace(/\/$/, "") + "/api";
 
 interface CustomAxiosInstance extends AxiosInstance {
   get<T = any>(url: string, config?: any): Promise<T>;

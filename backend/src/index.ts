@@ -16,14 +16,26 @@ import dashboardRoutes from "./modules/dashboard/dashboard.routes.js";
 
 const app = express();
 
-// CORS: allow the configured frontend URL in production, or any origin during
-// local development. If FRONTEND_URL is not set we fall back to the permissive
-// default to keep local development working.
-const corsOrigin = env.FRONTEND_URL
-  ? [env.FRONTEND_URL]
-  : true;
+// CORS: allow the configured frontend URL(s) in production, or any origin during
+// local development. FRONTEND_URL can be a single URL or a comma-separated list.
+// Trailing slashes are stripped so "https://example.com/" matches the request
+// origin "https://example.com".
+function parseCorsOrigins(value: string | undefined): string[] | boolean {
+  if (!value || value.trim() === "") {
+    return true; // allow any origin (safe only for local dev)
+  }
 
-app.use(cors({ origin: corsOrigin, credentials: true }));
+  const origins = value
+    .split(",")
+    .map((url) => url.trim().replace(/\/$/, ""))
+    .filter(Boolean);
+
+  return origins.length > 0 ? origins : true;
+}
+
+const corsOrigins = parseCorsOrigins(env.FRONTEND_URL);
+
+app.use(cors({ origin: corsOrigins, credentials: true }));
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => {
